@@ -8,7 +8,7 @@
 
 [![Status](https://img.shields.io/badge/status-pre--alpha-orange?style=flat-square)](#status--milestones)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](./LICENSE)
-[![Whitepaper](https://img.shields.io/badge/whitepaper-v4.2-brightgreen?style=flat-square)](#documentation)
+[![Whitepaper](https://img.shields.io/badge/whitepaper-available-brightgreen?style=flat-square)](#documentation)
 [![Website](https://img.shields.io/badge/web-yeblock.com-0a84ff?style=flat-square)](https://yeblock.com)
 [![Protocol](https://img.shields.io/badge/protocol-LIM-9832ff?style=flat-square)](./docs/lim-protocol.md)
 [![Post-Quantum](https://img.shields.io/badge/crypto-post--quantum-5fe2c6?style=flat-square)](#the-five-pillars)
@@ -236,7 +236,7 @@ This repository is the **public documentation hub**. The actual implementation l
 
 | Phase | Scope | Status |
 |---|---|---|
-| **Phase 0 — Concept & Brand** | Whitepaper v4.2, brand narrative, public web presence | Complete |
+| **Phase 0 — Concept & Brand** | Whitepaper, brand narrative, public web presence | Complete |
 | **Phase 1 — Public Documentation** | This repository, architecture spec, LIM protocol design | In progress |
 | **Phase 2 — Reference Application** | Production frontend with account system, AI chat surface, invite mechanics | Live in pre-alpha |
 | **Phase 3 — Compute Network Prototype** | Single-region testnet, LoRA composition runtime, off-chain settlement | Design |
