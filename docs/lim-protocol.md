@@ -1,8 +1,8 @@
-# LIM Protocol — Design Document
+# YeBlock LIM Protocol — Design Document
 
 > *Version: Draft v0.1 — Pre-Alpha*
 >
-> This document specifies the **Liquid Intelligence Mesh (LIM) protocol** at the level of primitives, composition rules, and choreography. It is the source-of-truth for implementers. Where the document and an implementation disagree, the document wins until amended.
+> This document specifies the **Liquid Intelligence Mesh (YeBlock LIM) protocol** at the level of primitives, composition rules, and choreography. It is the source-of-truth for implementers. Where the document and an implementation disagree, the document wins until amended.
 
 ## Table of Contents
 
@@ -21,9 +21,9 @@
 
 ## 1. Scope
 
-LIM specifies **how an inference workload travels** from a user, through a network of independent operators, to a compute provider, and back — including how it is paid for, how it is verified, and how its supporting artifacts (weights, adapters, receipts) are distributed.
+YeBlock LIM specifies **how an inference workload travels** from a user, through a network of independent operators, to a compute provider, and back — including how it is paid for, how it is verified, and how its supporting artifacts (weights, adapters, receipts) are distributed.
 
-LIM **does not specify**:
+YeBlock LIM **does not specify**:
 
 - Which models exist on the network (any model an author publishes).
 - Which inference runtimes operators use (any runtime that conforms to the execution interface).
@@ -41,14 +41,14 @@ This separation is deliberate. Specifying these would couple the protocol to pol
 | **Operator** | A network participant that executes workloads. |
 | **Author** | A network participant that publishes a base model or LoRA adapter. |
 | **Storage Provider** | A network participant that hosts content-addressed weight blobs. |
-| **Gateway** | A network participant that translates application-shaped requests into LIM protocol calls. |
+| **Gateway** | A network participant that translates application-shaped requests into YeBlock LIM protocol calls. |
 | **Receipt** | A signed record that a specific workload was executed against a specific model identity by a specific operator at a specific time. |
 | **Settlement Bundle** | A batch of receipts submitted to the chain for atomic payout. |
 | **Stake** | Economic collateral locked by operators, gateways, and storage providers; slashable on protocol violation. |
 
 ## 3. Primitives
 
-LIM is built on a small set of primitives. Everything else is composition.
+YeBlock LIM is built on a small set of primitives. Everything else is composition.
 
 ### 3.1 Content-Addressed Identity
 
@@ -256,45 +256,45 @@ This conservative approach is intentional. The protocol is intended to outlive i
 
 ## 9. Related Work
 
-LIM does not exist in a vacuum. It draws from — and consciously diverges from — three strands of prior art. We catalogue them here so that the protocol's positioning is legible to readers familiar with adjacent fields.
+YeBlock LIM does not exist in a vacuum. It draws from — and consciously diverges from — three strands of prior art. We catalogue them here so that the protocol's positioning is legible to readers familiar with adjacent fields.
 
 ### 9.1 Decentralized Compute Networks
 
-Networks such as **Bittensor**, **Akash**, **Render**, **Gensyn**, and **Ritual** address some subset of "decentralize the GPU." Each has a substantive contribution; none of them addresses the protocol surface LIM does.
+Networks such as **Bittensor**, **Akash**, **Render**, **Gensyn**, and **Ritual** address some subset of "decentralize the GPU." Each has a substantive contribution; none of them addresses the protocol surface YeBlock LIM does.
 
-| Strand | What it gets right | Where LIM diverges |
+| Strand | What it gets right | Where YeBlock LIM diverges |
 |---|---|---|
-| **Bittensor** | Subnet structure for specialized inference; reputation via validator scoring. | Subnet competition is intra-network; LIM treats the network as a single composable mesh. Bittensor settles on its own L1; LIM is chain-agnostic. |
-| **Akash** | Permissionless compute auctions; container-shaped workloads. | Akash workloads are arbitrary containers — useful but not inference-aware. LIM specifies a conformance suite for inference runtimes; routing knows what it is routing. |
-| **Render** | Token-incentivized GPU contribution at scale, originally for rendering. | Render's design is rendering-shaped. LIM is inference-shaped — LoRA composition, royalty settlement, and confidential channels are first-class concerns. |
+| **Bittensor** | Subnet structure for specialized inference; reputation via validator scoring. | Subnet competition is intra-network; YeBlock LIM treats the network as a single composable mesh. Bittensor settles on its own L1; YeBlock LIM is chain-agnostic. |
+| **Akash** | Permissionless compute auctions; container-shaped workloads. | Akash workloads are arbitrary containers — useful but not inference-aware. YeBlock LIM specifies a conformance suite for inference runtimes; routing knows what it is routing. |
+| **Render** | Token-incentivized GPU contribution at scale, originally for rendering. | Render's design is rendering-shaped. YeBlock LIM is inference-shaped — LoRA composition, royalty settlement, and confidential channels are first-class concerns. |
 | **Gensyn** | Verifiable training via probabilistic proofs. | Training, not inference. The cost-of-verification curve is different at inference time, where p99 latency budgets dominate. |
-| **Ritual** | Inference oracle for smart contracts; verifiable execution proofs. | Smart-contract-side inference, not user-side. Ritual is an oracle; LIM is a substrate. The two are complementary, not competing. |
+| **Ritual** | Inference oracle for smart contracts; verifiable execution proofs. | Smart-contract-side inference, not user-side. Ritual is an oracle; YeBlock LIM is a substrate. The two are complementary, not competing. |
 
-LIM's distinguishing claims relative to this strand are: **content-addressed weights** (Pillar 2), **LoRA-granular royalty settlement** (Pillar 3), and **end-to-end encrypted operator-blind execution** (Pillar 4). No project we are aware of bundles these three.
+YeBlock LIM's distinguishing claims relative to this strand are: **content-addressed weights** (Pillar 2), **LoRA-granular royalty settlement** (Pillar 3), and **end-to-end encrypted operator-blind execution** (Pillar 4). No project we are aware of bundles these three.
 
 ### 9.2 Content-Addressed Storage
 
-LIM's storage layer borrows directly from **IPFS / IPLD**, **Filecoin**, **Arweave**, and **Swarm**. Content-addressed storage is a settled idea; we do not claim novelty here.
+YeBlock LIM's storage layer borrows directly from **IPFS / IPLD**, **Filecoin**, **Arweave**, and **Swarm**. Content-addressed storage is a settled idea; we do not claim novelty here.
 
-What LIM contributes is the **economic binding** between a stored weight and an active settlement: a model is alive on LIM as long as its replication market clears. This is a different durability model than Filecoin (which prices storage in deal-time chunks) or Arweave (which front-loads a perpetual endowment). LIM treats replication as a continuous market, settled per-block alongside compute and royalties.
+What YeBlock LIM contributes is the **economic binding** between a stored weight and an active settlement: a model is alive on YeBlock LIM as long as its replication market clears. This is a different durability model than Filecoin (which prices storage in deal-time chunks) or Arweave (which front-loads a perpetual endowment). YeBlock LIM treats replication as a continuous market, settled per-block alongside compute and royalties.
 
 ### 9.3 Privacy-Preserving Inference
 
 The privacy literature splits into roughly three camps: **homomorphic encryption** (FHE inference, e.g. Concrete-ML), **secure multi-party computation** (MPC, e.g. Crypten), and **trusted execution environments** (TEE, e.g. Nvidia Confidential Computing, AMD SEV-SNP, Intel TDX).
 
-LIM's Phase A privacy story uses end-to-end encrypted channels — strong against passive observers, weak against the operator running inference. Phase B layers TEE-attested execution on top, raising the bar to "operator cannot inspect even with hardware access." We do not currently target FHE/MPC inference because their performance overhead exceeds what end-users will tolerate at the latencies modern inference demands; we keep them in scope as a future tier when their performance improves.
+YeBlock LIM's Phase A privacy story uses end-to-end encrypted channels — strong against passive observers, weak against the operator running inference. Phase B layers TEE-attested execution on top, raising the bar to "operator cannot inspect even with hardware access." We do not currently target FHE/MPC inference because their performance overhead exceeds what end-users will tolerate at the latencies modern inference demands; we keep them in scope as a future tier when their performance improves.
 
 ### 9.4 Royalty-Aware Composition
 
-The closest prior art for LoRA-granular royalty settlement is the **NFT royalty enforcement** debate (EIP-2981, ERC-6147, etc.) and academic work on **fractional ownership** in creative industries. LIM's contribution is to apply these patterns to *behavioral artifacts* (LoRA adapters as fine-grained skills) rather than to whole-asset ownership.
+The closest prior art for LoRA-granular royalty settlement is the **NFT royalty enforcement** debate (EIP-2981, ERC-6147, etc.) and academic work on **fractional ownership** in creative industries. YeBlock LIM's contribution is to apply these patterns to *behavioral artifacts* (LoRA adapters as fine-grained skills) rather than to whole-asset ownership.
 
-We are explicit that royalty enforcement is **protocol-mandated**, not socially-encouraged. Settlement contracts honor manifests automatically. There is no opt-out at the protocol layer; an operator that wishes to bypass royalties cannot do so through LIM at all.
+We are explicit that royalty enforcement is **protocol-mandated**, not socially-encouraged. Settlement contracts honor manifests automatically. There is no opt-out at the protocol layer; an operator that wishes to bypass royalties cannot do so through YeBlock LIM at all.
 
 ### 9.5 Post-Quantum Migration
 
-The cryptographic community has produced standardized post-quantum primitives (NIST PQC: ML-KEM / Kyber, ML-DSA / Dilithium, SLH-DSA / SPHINCS+, FN-DSA / Falcon) that LIM uses as-is. We claim no novelty in primitive design.
+The cryptographic community has produced standardized post-quantum primitives (NIST PQC: ML-KEM / Kyber, ML-DSA / Dilithium, SLH-DSA / SPHINCS+, FN-DSA / Falcon) that YeBlock LIM uses as-is. We claim no novelty in primitive design.
 
-Our contribution is **applying them across an entire stack from day zero** rather than retrofitting them into a classical-only protocol. Most production systems will face a costly migration when classical schemes break; LIM does not, because its data-at-rest and channel security are hybrid post-quantum from v1.
+Our contribution is **applying them across an entire stack from day zero** rather than retrofitting them into a classical-only protocol. Most production systems will face a costly migration when classical schemes break; YeBlock LIM does not, because its data-at-rest and channel security are hybrid post-quantum from v1.
 
 ## 10. Open Questions
 

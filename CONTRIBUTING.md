@@ -1,6 +1,6 @@
 # Contributing to YeBlock
 
-Thank you for considering a contribution to YeBlock. This is the public documentation hub for the LIM protocol — every fix to a typo, every clarification of an ambiguous passage, and every well-argued protocol proposal makes the project measurably better.
+Thank you for considering a contribution to YeBlock. This is the public documentation hub for the YeBlock LIM protocol — every fix to a typo, every clarification of an ambiguous passage, and every well-argued protocol proposal makes the project measurably better.
 
 This guide explains how to contribute productively. Read it once before opening a substantive PR; small fixes (typos, broken links, dead references) can skip most of it.
 
@@ -39,7 +39,7 @@ If you want to contribute but are not sure where:
 
 - **Documentation issues** labeled [`documentation`](https://github.com/yeblocklim/YeBlock/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation) and [`good first issue`](https://github.com/yeblocklim/YeBlock/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are accessible entry points.
 - **Open questions** in [`docs/lim-protocol.md` §10](./docs/lim-protocol.md#10-open-questions) list explicitly unresolved design questions. Substantive analysis on any of them is welcome — open a Discussion.
-- **The lexicon** in [`docs/concepts.md`](./docs/concepts.md) is where new LIM-specific terms get defined. If you find a term used in the docs but missing from the lexicon, that's a contribution opportunity.
+- **The lexicon** in [`docs/concepts.md`](./docs/concepts.md) is where new YeBlock LIM-specific terms get defined. If you find a term used in the docs but missing from the lexicon, that's a contribution opportunity.
 
 ## Types of Contributions
 
@@ -96,7 +96,7 @@ Before committing:
 
 - **Render check** — view your edits in a Markdown previewer that supports GitHub-Flavored Markdown and Mermaid. VS Code with the [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) extension works.
 - **Link check** — every relative link should resolve. Every external link should be reachable.
-- **Spell check** — most editors handle this. Pay particular attention to LIM-specific terms in `docs/concepts.md`.
+- **Spell check** — most editors handle this. Pay particular attention to YeBlock LIM-specific terms in `docs/concepts.md`.
 
 ### 5. Commit
 
@@ -127,7 +127,7 @@ A maintainer will review your PR within **7 days** (often much faster). Reviews 
 
 ### Voice and Tone
 
-- **Direct, declarative, technical.** Prefer `LIM defines X as Y` over `It is the opinion of the protocol that X might be Y`.
+- **Direct, declarative, technical.** Prefer `YeBlock LIM defines X as Y` over `It is the opinion of the protocol that X might be Y`.
 - **Active voice.** `The operator signs the receipt`, not `The receipt is signed by the operator`.
 - **No marketing language.** No "innovative", "revolutionary", "next-generation", "groundbreaking". These are red flags in a protocol document.
 - **Honesty about limits.** When something is unsettled, say so explicitly. The [`Open Questions`](./docs/lim-protocol.md#10-open-questions) section exists for this.
@@ -211,7 +211,7 @@ This project follows the [Contributor Covenant 2.1](./CODE_OF_CONDUCT.md). All c
 
 ## Licensing
 
-By contributing to this repository, you agree that your contribution is licensed under the same [MIT License](./LICENSE) that covers the rest of the repository. If your contribution incorporates work from another source, you must clearly attribute it and confirm that the source's license is compatible.
+By contributing to this repository, you agree that your contribution is licensed under the same [Apache License 2.0](./LICENSE) that covers the rest of the repository. If your contribution incorporates work from another source, you must clearly attribute it and confirm that the source's license is compatible.
 
 ---
 

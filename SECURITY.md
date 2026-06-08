@@ -17,7 +17,7 @@ This security policy covers:
 This policy **does not** cover:
 
 - Third-party services we depend on (Cloudflare, Reown, etc.) — please report those directly to the respective vendor.
-- Issues in user-operated nodes, gateways, or applications built on top of LIM. Those are the responsibility of their operators.
+- Issues in user-operated nodes, gateways, or applications built on top of YeBlock LIM. Those are the responsibility of their operators.
 - Theoretical weaknesses in standardized cryptographic primitives we use (e.g. ML-KEM, Dilithium). Coordinate with the standards bodies (NIST, IETF) instead.
 
 If you are unsure whether something is in scope, **err on the side of reporting it**. We will route it appropriately.

@@ -1,6 +1,6 @@
 # YeBlock LIM — Architecture
 
-> This document describes the **target architecture** of the LIM protocol stack and the YeBlock reference network. Components marked *(Planned)* are in design or early prototyping. The architecture is intentionally specified before implementation: it is the contract against which the implementation will be evaluated.
+> This document describes the **target architecture** of the YeBlock LIM protocol stack and the YeBlock reference network. Components marked *(Planned)* are in design or early prototyping. The architecture is intentionally specified before implementation: it is the contract against which the implementation will be evaluated.
 
 ## Table of Contents
 
@@ -27,17 +27,17 @@ The architecture is shaped by five non-negotiable goals. Every component decisio
 | **Composable by default** | Any output of one pillar can be the input of another, without bespoke integration. A LoRA adapter from Pillar 3 can be served by any operator in Pillar 1, paid via Pillar 4-encrypted channels, and settled with Pillar 5 forward-secure signatures. |
 | **Verifiable, not trusted** | Operators are paid for *provable* work. Users get *cryptographic* receipts. Storage providers commit to *content-addressed* hashes. Trust is replaced with verification at every interface. |
 | **Forward-secure** | The protocol must remain secure under cryptographic assumptions that are not yet broken but will be. Post-quantum primitives are not an afterthought; they are the baseline. |
-| **Boring at the edges** | Application developers should be able to use LIM through familiar SDK shapes (REST/SSE/streaming) without learning protocol internals. Complexity belongs inside the protocol, not at its surface. |
+| **Boring at the edges** | Application developers should be able to use YeBlock LIM through familiar SDK shapes (REST/SSE/streaming) without learning protocol internals. Complexity belongs inside the protocol, not at its surface. |
 
 ## Design Invariants
 
-A goal is something we strive for. An **invariant** is something that must hold *at all times* for any conformant LIM implementation. Invariants are the protocol's load-bearing walls — they are the properties that, if any one of them is broken, the system is no longer LIM.
+A goal is something we strive for. An **invariant** is something that must hold *at all times* for any conformant YeBlock LIM implementation. Invariants are the protocol's load-bearing walls — they are the properties that, if any one of them is broken, the system is no longer YeBlock LIM.
 
 There are eight.
 
 ### I-1. Content Identity is the Universal Reference
 
-Every artifact addressable by LIM — base model, LoRA adapter, royalty manifest, conformance suite, execution receipt — is identified solely by the cryptographic hash of its content under a forward-secure hash function. There is no separate name registry, no DNS-like indirection, no version numbering scheme that can be re-pointed.
+Every artifact addressable by YeBlock LIM — base model, LoRA adapter, royalty manifest, conformance suite, execution receipt — is identified solely by the cryptographic hash of its content under a forward-secure hash function. There is no separate name registry, no DNS-like indirection, no version numbering scheme that can be re-pointed.
 
 > *Consequence:* duplicate artifacts have identical identities. Plagiarism is mechanically detectable. Cache keys are protocol-defined.
 
@@ -57,7 +57,7 @@ Every signed object carries an explicit algorithm tag. Verification is performed
 
 Prompts and responses between user and operator are encrypted under session keys derived from a hybrid post-quantum KEM. The gateway, the router, any intermediate observer — and any quantum adversary recording today's ciphertext — cannot recover plaintext. This is true regardless of the privacy tier the user selects.
 
-> *Consequence:* there is no "plaintext mode" in LIM. There is only "with confidential inference" and "without."
+> *Consequence:* there is no "plaintext mode" in YeBlock LIM. There is only "with confidential inference" and "without."
 
 ### I-5. Receipts are Settlement Instruments, Not Logs
 
@@ -79,15 +79,15 @@ Every party whose misbehavior could damage another party must post stake proport
 
 ### I-8. The Protocol is Policy-Neutral
 
-LIM specifies how inference travels, how it is paid for, and how it is verified. It does not specify what inference is allowed, what content is acceptable, or what users may say or read. Policy is enforced at the gateway and application layers, where users can choose between competing policies. The protocol itself takes no side.
+YeBlock LIM specifies how inference travels, how it is paid for, and how it is verified. It does not specify what inference is allowed, what content is acceptable, or what users may say or read. Policy is enforced at the gateway and application layers, where users can choose between competing policies. The protocol itself takes no side.
 
-> *Consequence:* LIM is not a moderator. It cannot censor, and it cannot be compelled to censor at the protocol layer. Compulsion, when applied, applies to specific applications or gateways — never to the substrate.
+> *Consequence:* YeBlock LIM is not a moderator. It cannot censor, and it cannot be compelled to censor at the protocol layer. Compulsion, when applied, applies to specific applications or gateways — never to the substrate.
 
-These eight invariants are normative. A system that violates any of them is, by construction, not LIM.
+These eight invariants are normative. A system that violates any of them is, by construction, not YeBlock LIM.
 
 ## System Layers
 
-The full system is best understood as **four horizontal layers** sitting on top of the **five LIM pillars**.
+The full system is best understood as **four horizontal layers** sitting on top of the **five YeBlock LIM pillars**.
 
 ```mermaid
 flowchart TB
@@ -95,7 +95,7 @@ flowchart TB
         direction LR
         WEB["YeBlock Web App<br/>(reference impl.)"]
         APP["3rd-party Apps"]
-        SDK["LIM SDK"]
+        SDK["YeBlock LIM SDK"]
     end
 
     subgraph L2["Layer 2 — Gateway"]
@@ -105,7 +105,7 @@ flowchart TB
         GW3["Rate / Abuse Control"]
     end
 
-    subgraph L3["Layer 3 — LIM Protocol"]
+    subgraph L3["Layer 3 — YeBlock LIM Protocol"]
         direction LR
         PR1["Compute Routing"]
         PR2["Weight Resolution"]
@@ -141,7 +141,7 @@ flowchart TB
 |---|---|---|
 | **L1 — Application** | User interfaces, developer SDKs, application-specific logic. | Application authors (incl. YeBlock reference web app). |
 | **L2 — Gateway** | Translates application-shaped requests into protocol calls. Handles session lifecycle, identity, rate control. | Anyone — there can be many gateways; YeBlock operates one reference gateway. |
-| **L3 — LIM Protocol** | Routes workloads, resolves weights, composes LoRAs, manages encrypted channels, produces settlement pre-images. | Open protocol — implemented by node clients. |
+| **L3 — YeBlock LIM Protocol** | Routes workloads, resolves weights, composes LoRAs, manages encrypted channels, produces settlement pre-images. | Open protocol — implemented by node clients. |
 | **L4 — Settlement & Storage** | Persists weights, executes inference, settles payments on-chain. | Independent participants (operators, storage providers, the chain). |
 
 ## The Five Pillars in Detail
@@ -168,7 +168,7 @@ flowchart TB
 - *Replication market* — Storage providers earn fees for keeping replicas live. Replication count is a function of demand, not central decree.
 - *Garbage collection* — A weight is preserved as long as a single replica is paid for. There is no central deprecation authority.
 
-**Why this matters:** model weights are infrastructure. A model that disappears because a vendor pivots is a structural failure of centralized AI. LIM treats weights as public goods with an explicit, market-cleared replication budget.
+**Why this matters:** model weights are infrastructure. A model that disappears because a vendor pivots is a structural failure of centralized AI. YeBlock LIM treats weights as public goods with an explicit, market-cleared replication budget.
 
 ### Pillar 3 — Decentralized AI
 
@@ -192,7 +192,7 @@ flowchart TB
 - *Confidential inference (Phase B)* — TEE-attested execution where the operator runs the inference inside an enclave whose memory is opaque to the host.
 - *Metadata minimization* — Routing carries only what is required to schedule (size class, latency budget). Content stays with the user.
 
-**Trade-off acknowledged:** confidential inference adds latency and limits operator flexibility (TEE-equipped GPUs are a subset of the network). LIM offers privacy as a tier the user explicitly opts into, not a one-size-fits-all default.
+**Trade-off acknowledged:** confidential inference adds latency and limits operator flexibility (TEE-equipped GPUs are a subset of the network). YeBlock LIM offers privacy as a tier the user explicitly opts into, not a one-size-fits-all default.
 
 ### Pillar 5 — Post-Quantum
 
@@ -204,18 +204,18 @@ flowchart TB
 - *Hybrid key exchange* — Channels use classical + post-quantum hybrid KEM so that traffic recorded today cannot be retroactively decrypted by a future quantum adversary.
 - *Algorithm agility* — Every signed object carries an algorithm tag. Migrating to a new primitive does not invalidate historical receipts.
 
-**Posture:** LIM is not a research project on post-quantum cryptography. It uses standardized, conservatively-vetted primitives. The contribution is *applying them across an entire stack*, not inventing new ones.
+**Posture:** YeBlock LIM is not a research project on post-quantum cryptography. It uses standardized, conservatively-vetted primitives. The contribution is *applying them across an entire stack*, not inventing new ones.
 
 ## Inference Request Lifecycle
 
-A single LIM-native inference exercises every pillar. The lifecycle below is the protocol-level happy path.
+A single YeBlock LIM-native inference exercises every pillar. The lifecycle below is the protocol-level happy path.
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant U as User / App
     participant G as Gateway
-    participant R as LIM Router
+    participant R as YeBlock LIM Router
     participant O as Compute Operator
     participant S as Storage Network
     participant C as Settlement Chain
@@ -268,7 +268,7 @@ Note that **the protocol does not pretend to solve content moderation**. That is
 
 ## Security Model
 
-LIM's security posture sits on three legs:
+YeBlock LIM's security posture sits on three legs:
 
 1. **Cryptographic security** — All signatures, encryption, and identity primitives are post-quantum or hybrid post-quantum. Recorded traffic and historic receipts remain secure under foreseeable advances in cryptanalysis.
 2. **Economic security** — Operators stake collateral that is slashable if they deviate from protocol rules. The cost of attack scales with the value of the network.
@@ -284,44 +284,44 @@ The decentralized AI space is crowded. Many projects make adjacent claims. The a
 
 A pure GPU marketplace (rent idle GPUs, run workloads, settle in a token) addresses the *supply* problem but ignores everything else. LoRA composition, royalty settlement, end-to-end encryption, and post-quantum durability are not marketplace concerns — they require protocol-level guarantees. A marketplace is a billing front-end with extra steps; a protocol is a substrate.
 
-LIM aggregates idle GPUs as a *consequence* of Pillar 1, not as a goal. The other four pillars are what make LIM a protocol rather than a procurement system.
+YeBlock LIM aggregates idle GPUs as a *consequence* of Pillar 1, not as a goal. The other four pillars are what make YeBlock LIM a protocol rather than a procurement system.
 
 ### Why Not "AI Subnet on a Generic Mining Network"
 
 Networks that retrofit AI inference onto a generic proof-of-work or proof-of-resource substrate inherit that substrate's design priors — tokenomics optimized for hash power, governance optimized for miner politics, primitives optimized for currency settlement. Inference work has different shape: it is latency-sensitive, content-sensitive, royalty-aware, and privacy-preserving in ways currency settlement is not.
 
-LIM specifies the protocol from the ground up around inference's actual requirements. It can settle on any chain, but its design is not warped to fit a chain's existing economic narrative.
+YeBlock LIM specifies the protocol from the ground up around inference's actual requirements. It can settle on any chain, but its design is not warped to fit a chain's existing economic narrative.
 
 ### Why Not "Federated Learning Network"
 
-Federated learning addresses *training* under privacy constraints. LIM addresses *inference*. They are adjacent but distinct problems with different threat models, different latency budgets, different economic shapes, and different participants. Most users will never train; every user will inference.
+Federated learning addresses *training* under privacy constraints. YeBlock LIM addresses *inference*. They are adjacent but distinct problems with different threat models, different latency budgets, different economic shapes, and different participants. Most users will never train; every user will inference.
 
-A future LIM extension may incorporate decentralized fine-tuning, but the v1 protocol is scoped to inference because inference is where the immediate cognitive feudalism is being built.
+A future YeBlock LIM extension may incorporate decentralized fine-tuning, but the v1 protocol is scoped to inference because inference is where the immediate cognitive feudalism is being built.
 
 ### Why Not "L1 / L2 / App-chain"
 
-LIM is chain-agnostic at the protocol layer. We considered shipping a custom L1 ("the AI chain") and rejected it. The reasons:
+YeBlock LIM is chain-agnostic at the protocol layer. We considered shipping a custom L1 ("the AI chain") and rejected it. The reasons:
 
 1. Chain design is its own enormous problem; conflating it with protocol design slows both.
-2. Settlement chains evolve faster than inference protocols. Coupling LIM to a single chain freezes the protocol against the worst part of the stack.
+2. Settlement chains evolve faster than inference protocols. Coupling YeBlock LIM to a single chain freezes the protocol against the worst part of the stack.
 3. Most users do not care which chain a settlement uses. They care about correctness and finality, both of which are properties of any production chain.
 
-LIM is implemented today by binding a settlement contract suite to a chosen chain. That binding is replaceable.
+YeBlock LIM is implemented today by binding a settlement contract suite to a chosen chain. That binding is replaceable.
 
 ### Why Not "Just Use OpenRouter / Together / Replicate"
 
 Existing inference aggregators are products, not protocols. They do not offer LoRA-granular royalty settlement, content-addressed weight identity, end-to-end encryption with operator-blind execution, or forward-secure cryptographic guarantees. Any aggregator could add these features tomorrow; none would, because doing so undermines the aggregator's pricing power.
 
-LIM is the *protocol layer* aggregators could conform to if they chose. We are building the protocol because no aggregator will build it themselves.
+YeBlock LIM is the *protocol layer* aggregators could conform to if they chose. We are building the protocol because no aggregator will build it themselves.
 
 ## What is Out of Scope (and Why)
 
-A protocol is defined as much by what it refuses to do as by what it does. LIM explicitly does **not** address:
+A protocol is defined as much by what it refuses to do as by what it does. YeBlock LIM explicitly does **not** address:
 
-- **Content moderation policy.** This is the responsibility of applications and gateways. LIM is policy-neutral by design — it is a protocol, not a publisher.
-- **Token speculation.** LIM may eventually have a network token for staking, settlement, and governance. The protocol design does not depend on the token having any particular market price.
-- **Model alignment research.** LIM provides a substrate on which alignment work can run; it does not contribute novel alignment techniques. We defer to the broader research community on what models *should* do, and focus on how they *get to users*.
-- **Identity issuance.** LIM uses cryptographic identities. Mapping those to legal identities, KYC, or social reputation is an application concern.
+- **Content moderation policy.** This is the responsibility of applications and gateways. YeBlock LIM is policy-neutral by design — it is a protocol, not a publisher.
+- **Token speculation.** YeBlock LIM may eventually have a network token for staking, settlement, and governance. The protocol design does not depend on the token having any particular market price.
+- **Model alignment research.** YeBlock LIM provides a substrate on which alignment work can run; it does not contribute novel alignment techniques. We defer to the broader research community on what models *should* do, and focus on how they *get to users*.
+- **Identity issuance.** YeBlock LIM uses cryptographic identities. Mapping those to legal identities, KYC, or social reputation is an application concern.
 
 These omissions are not gaps — they are boundaries. A protocol that tries to do everything ends up doing nothing well.
 
