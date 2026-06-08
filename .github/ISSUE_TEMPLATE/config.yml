@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussion / Design Question
+    url: https://github.com/yeblocklim/YeBlock/discussions
+    about: For open-ended questions, design debates, or governance proposals — please open a Discussion instead of an Issue.
+  - name: Website
+    url: https://yeblock.com
+    about: Visit yeblock.com for the live application and project overview.

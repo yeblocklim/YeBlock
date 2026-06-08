@@ -1,0 +1,71 @@
+name: Protocol Design Proposal
+description: Propose a change, clarification, or extension to the YeBlock LIM protocol design.
+title: "[proposal] "
+labels: ["protocol", "rfc"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For substantive protocol design proposals. Small clarifications can go in a Documentation Issue;
+        open-ended questions should start as a [Discussion](https://github.com/yeblocklim/YeBlock/discussions).
+
+  - type: input
+    id: title
+    attributes:
+      label: Proposal Title
+      placeholder: A short, descriptive title.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What problem does this solve? Why now? What goes wrong if we don't address it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Change
+      description: A concrete description of the change. Reference specific sections of the protocol document where applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches did you consider, and why did you reject them?
+
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Trade-offs
+      description: What does this proposal cost (complexity, performance, security)? What does it gain?
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Pillar 1 — Decentralized Compute
+        - Pillar 2 — Decentralized Storage
+        - Pillar 3 — Decentralized AI
+        - Pillar 4 — Privacy Protocol
+        - Pillar 5 — Post-Quantum
+        - Settlement Layer
+        - Cross-cutting / Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checks
+      options:
+        - label: I have read [docs/lim-protocol.md](https://github.com/yeblocklim/YeBlock/blob/main/docs/lim-protocol.md) and ARCHITECTURE.md.
+          required: true
+        - label: This is not a duplicate of an existing proposal or open question.
+          required: true

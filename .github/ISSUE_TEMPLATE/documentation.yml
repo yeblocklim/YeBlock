@@ -1,0 +1,41 @@
+name: Documentation Issue
+description: Report a typo, broken link, unclear passage, or factual error in the documentation.
+title: "[docs] "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve YeBlock's public documentation. Clear docs are protocol infrastructure — every fix matters.
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Which file and (if applicable) which section?
+      placeholder: e.g. ARCHITECTURE.md — section "The Five Pillars in Detail"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is wrong, unclear, or missing?
+      placeholder: A concise description of the issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Fix (optional)
+      description: If you have a concrete suggestion, share it here.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checks
+      options:
+        - label: I have searched existing issues and discussions before opening this.
+          required: true
