@@ -1,0 +1,68 @@
+name: Bug Report
+description: Report a defect in the public web application or any open-source component.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Reproducible reports get fixed fastest.
+        For protocol design questions, please use **Protocol Design Proposal** or **Discussions** instead.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did you encounter this?
+      options:
+        - yeblock.com (web application)
+        - Documentation in this repository
+        - Other (please describe in the body)
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A one-paragraph description of the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to Reproduce
+      description: Numbered steps. Include URLs, browser, and any state required.
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: Browser, OS, device — anything relevant.
+      placeholder: e.g. Chrome 138 on macOS 15.4
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checks
+      options:
+        - label: I have searched existing issues for duplicates.
+          required: true
+        - label: I am not reporting a security vulnerability through this template (security reports should go to ye@yeblock.com — see SECURITY.md).
+          required: true
