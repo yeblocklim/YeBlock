@@ -7,7 +7,7 @@
 // YeBlock LIM - Reference SDK shape (TypeScript)
 //
 // "Boring at the edges" (ARCHITECTURE.md Design Goals): application developers should reach the
-// protocol through a familiar, OpenAI-style surface and never have to learn protocol internals.
+// protocol through the YeBlock LIM API (Mesh SDK) without having to learn protocol internals.
 // All five pillars are inherited by default - content-addressed weights, LoRA composition,
 // end-to-end encryption, post-quantum channel security, and on-chain settlement happen below
 // this surface.
@@ -107,8 +107,7 @@ export interface YeBlockClientOptions {
 }
 
 /**
- * Entry point. Mirrors a familiar chat surface so existing application code ports with minimal
- * change, while every request is content-addressed, LoRA-composed, end-to-end encrypted,
+ * Entry point. YeBlock's own Mesh SDK surface; every request is content-addressed, LoRA-composed, end-to-end encrypted,
  * post-quantum-protected, and settled on-chain underneath.
  *
  * @example
