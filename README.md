@@ -118,7 +118,7 @@ flowchart TB
         APP3["SDKs"]
     end
 
-    subgraph LIM["YeBlock LIM Protocol Stack"]
+    subgraph "YeBlock LIM"["YeBlock LIM Protocol Stack"]
         direction TB
         P3["Pillar 3 — Decentralized AI<br/>Inference Runtime + LoRA Composition"]
         P1["Pillar 1 — Decentralized Compute<br/>Routing · Execution · Verification"]
@@ -145,10 +145,10 @@ flowchart TB
         N4["Users"]
     end
 
-    Application --> LIM
-    LIM --> Settlement
+    Application --> "YeBlock LIM"
+    "YeBlock LIM" --> Settlement
     Settlement <--> Network
-    LIM <--> Network
+    "YeBlock LIM" <--> Network
 
     classDef pillar fill:#0f1733,stroke:#4dd2ff,color:#fff
     classDef appLayer fill:#1a1f3a,stroke:#a78bfa,color:#fff
