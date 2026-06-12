@@ -10,6 +10,7 @@
 - [The Five Pillars in Detail](#the-five-pillars-in-detail)
 - [Inference Request Lifecycle](#inference-request-lifecycle)
 - [Settlement Choreography](#settlement-choreography)
+- [The Liquid Economy Applications](#the-liquid-economy-applications)
 - [Trust Boundaries](#trust-boundaries)
 - [Security Model](#security-model)
 - [Why This Architecture, Not Another](#why-this-architecture-not-another)
@@ -251,6 +252,69 @@ Settlement is **batched, not per-request**, to keep on-chain footprint low.
 - Disputes are handled by an on-chain challenge window during which any party can submit counter-evidence.
 
 This pattern is intentionally similar to optimistic rollup choreography. The novelty is **what** is being attested, not **how** the attestation is processed.
+
+## The Liquid Economy Applications
+
+The five pillars are the substrate. The **Liquid Economy** is the set of three protocol-native applications built on top of them — **YeBlock LIME** (Liquid Idea Market & Execution), **YeBlock LEM** (Liquid Energy Mesh), and **YeBlock LIP** (Liquid Intelligence Pay). They are architectural recompositions, not new trust machinery: each one reuses receipts (I-5), atomic royalty settlement (I-6), stake-and-slash (I-7), TEE attestation (Pillar 4), and post-quantum signatures (Pillar 5). All three are design-stage; their normative interfaces live in [docs/lim-protocol.md §11](./docs/lim-protocol.md#11-the-liquid-economy-extensions) and [`reference/`](./reference).
+
+### YeBlock LIME — Idea Lifecycle
+
+An idea on YeBlock LIME is an **IdeaCapsule**: client-side-encrypted content plus a public teaser, registered on-chain with a content hash, license terms, and pricing — signed with a post-quantum signature. The registration timestamp is a **Proof of Priority**: "this idea existed, authored by this identity, at this time," verifiable even against a future quantum adversary.
+
+```
+1. Mint        Author encrypts idea → uploads to content-addressed storage →
+               registers hash + teaser + terms on-chain (PQ-signed).        [Pillars 2, 5]
+2. Teaser      Market displays only the public abstract. Full content
+               stays encrypted; keys stay with the author.                  [Pillar 4 — L1]
+3. Escrow      A funder locks payment in an escrow contract. Author grants
+               decryption. Mode: buy-out, or licensed execution with
+               perpetual royalties (mirrors the LoRA royalty model).
+4. Execute     The mesh decomposes the capsule into a task pipeline; each
+               task is routed to operators as composed models (base + LoRA
+               stack). High-value capsules pin execution to TEE operators
+               so node owners cannot read the idea.                         [Pillars 1, 3, 4 — L2]
+5. Reverse-    Steps no model can perform (physical-world legwork,
+   hire        credentialed sign-off, final human judgment) are posted as
+               priced human tasks. Human executors post stake, deliver
+               against receipts, are spot-checked by model-based QA, and
+               are slashable — the same regime as any operator.             [I-5, I-7]
+6. Settle      All receipts (machine and human) validate → escrow settles
+               atomically. Downstream revenue replays the royalty
+               waterfall with two added seats: idea author and human
+               executor(s).                                                 [I-6]
+7. Lineage     Derivative ideas reference their parents on-chain; revenue
+               flows upstream through the same derivative-aware waterfall
+               that LoRA lineages use. Archival signatures (SLH-DSA class)
+               keep the lineage verifiable for decades.                     [Pillars 2, 5]
+```
+
+This design depends entirely on Pillar 4. Without encrypted teasers and operator-blind execution, an idea market fails at step 2, because anyone could copy an idea the moment it was published. That is why YeBlock LIME is an application of the mesh and not a standalone product.
+
+### YeBlock LEM — Energy Paths
+
+YeBlock LEM begins from a physical constraint the protocol refuses to paper over: **electricity does not travel; intelligence does**. YeBlock LEM never touches physical power delivery, virtual power plants, or grid interconnects. It converts energy advantage into network advantage *in place*, through three paths:
+
+| Path | Who | Mechanism |
+|---|---|---|
+| **A — Energy-to-Compute** | Has power *and* hardware | Routing gains energy-aware signals (energy cost, carbon intensity, time-of-day) alongside reputation/price/latency. Batch and bulk workloads migrate to the cheapest power; the operator's margin *is* the energy differential. |
+| **B — Energy Hosting** | Has power, no hardware | Hardware owners deploy machines at an energy provider's site. The node's revenue splits on-chain between the **hardware seat** and the **energy seat** by a freely negotiated ratio — trustless, because settlement enforces the split. |
+| **C — Energy Credits** | Has attestable supply | Metered contributions (smart meter, TEE-signed) mint **JouleCredits** — auditable on-chain energy credits. Operators buy them to offset power costs; ESG-constrained buyers retire green-attested credits. Surplus windows (solar noon, curtailed wind) list at a discount, and the scheduler shifts elastic workloads into them. |
+
+Energy attestation follows the same trust pattern as compute: **PoEC (Proof of Energy Contribution)** — meter readings signed inside a TEE, metering detail encrypted (only aggregates public), credits PQ-signed for decade-scale audit validity, and over-reporting slashed against stake with redundant-meter cross-checks.
+
+To be clear about scope: YeBlock LEM is not an energy market and does not claim to move a single watt. It is an information and settlement layer that makes the energy already attached to the network visible to routing and settlement.
+
+### YeBlock LIP — Settlement Rail
+
+YeBlock LIP generalizes the protocol's internal settlement into a payment rail shaped for machines. Human payment rails are low-frequency / high-value; machine-economy payments are the inverse — per-token amounts at agent frequency, with multi-party fan-out on every call. Three layers, inside-out:
+
+1. **The network's own settlement engine.** Every settled inference already fans out to many seats (operator, LoRA authors, idea author, human executors, storage, protocol). YeBlock LIP upgrades batched settlement to **streaming settlement** — value flows per receipt rather than per bundle window, bounded by the same bundle validation rules.
+2. **Agent wallets.** Account-abstracted wallets held by AI agents under owner-set policy: per-call and daily limits, recipient allowlists, purpose constraints, instant revocation. Keys live in TEEs. Within policy, an agent pays autonomously — for API calls, data, compute, other agents, or human tasks.
+3. **A2A clearing.** In multi-agent pipelines (a YeBlock LIME execution is one), agents settle with each other at machine latency. This layer is open to external applications: any agent system can clear over YeBlock LIP without running inference on the mesh.
+
+YeBlock LIP's distinguishing property is inherited rather than invented: **every payment is anchored to a signed execution receipt** (I-5). A conventional rail can prove that money moved, but not that the inference being paid for actually ran. YeBlock LIP bundles the payment with the signed execution receipt, so both are verified together.
+
+Two practical limits: throughput figures for the settlement rail are design-capacity targets, validated only by public testnet measurements; and YeBlock LIP does not provide fiat on/off-ramps or target human retail payments. It is scoped to in-protocol settlement and machine-to-machine payments.
 
 ## Trust Boundaries
 

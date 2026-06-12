@@ -22,6 +22,13 @@ import type {
   KemTag,
   LatencyClass,
   ExecutionReceipt,
+  IdeaCapsule,
+  IdeaLicense,
+  EscrowPhase,
+  JouleCredit,
+  PaymentStream,
+  StreamUnit,
+  AgentWalletPolicy,
 } from "../types/protocol";
 
 /** Identifier of a base model on the network (resolves to a content hash). */
@@ -106,9 +113,56 @@ export interface YeBlockClientOptions {
   identityKey?: { publicKey: string; privateKey: string };
 }
 
+// ---------------------------------------------------------------------------
+// Liquid Economy surfaces (design-stage; lim-protocol §11)
+// ---------------------------------------------------------------------------
+
+/** YeBlock LIME - publish, fund, and track encrypted ideas. The SDK encrypts the payload client-side
+ *  before upload; the gateway and the protocol only ever see the hash and the teaser. */
+export interface Ideas {
+  /** Encrypt + upload the payload, register the capsule, return the on-chain record. The
+   *  registration timestamp is the author's Proof of Priority. */
+  publish(req: {
+    payload: Uint8Array;
+    teaser: string;
+    license: IdeaLicense;
+    ask: bigint;
+    royaltyBps?: number;
+    parents?: ContentId[];
+  }): Promise<IdeaCapsule>;
+  /** Escrow funds against a capsule (decryption grant is the author's act, not the SDK's). */
+  fund(capsuleId: ContentId): Promise<{ phase: EscrowPhase }>;
+  /** Track an execution: machine steps, posted human tasks, receipts, settlement. */
+  status(capsuleId: ContentId): Promise<{ phase: EscrowPhase; receipts: ExecutionReceipt[] }>;
+}
+
+/** YeBlock LIP - agent wallet and streaming payments. Policy is enforced by the rail at validation
+ *  time; the SDK cannot spend outside the owner-set policy even if asked to. */
+export interface Payments {
+  policy(): Promise<AgentWalletPolicy>;
+  /** Open a streaming payment (pay-per-token / per-second / per-joule). */
+  openStream(req: {
+    payee: Identity;
+    ratePerUnit: bigint;
+    unit: StreamUnit;
+  }): Promise<PaymentStream>;
+  /** Close a stream; the final checkpoint and the close are one settlement act. */
+  closeStream(streamId: ContentId): Promise<{ totalSettled: bigint }>;
+}
+
+/** YeBlock LEM - energy credit market access (Path C). Operators buy credits to offset power costs;
+ *  ESG-constrained buyers retire green-attested credits. */
+export interface Energy {
+  /** Quote available credits for a window, optionally green-certified only. */
+  quote(req: { joules: bigint; greenOnly?: boolean }): Promise<{ credits: JouleCredit[]; cost: bigint }>;
+  /** Retire a held credit (0 = power-cost offset, 1 = ESG compliance). */
+  retire(creditId: ContentId, reason: 0 | 1): Promise<void>;
+}
+
 /**
  * Entry point. YeBlock's own Mesh SDK surface; every request is content-addressed, LoRA-composed, end-to-end encrypted,
- * post-quantum-protected, and settled on-chain underneath.
+ * post-quantum-protected, and settled on-chain underneath. The Liquid Economy surfaces
+ * (`ideas`, `payments`, `energy`) are design-stage and ship behind capability flags.
  *
  * @example
  *   const client = new YeBlock({ apiKey: process.env.YEBLOCK_API_KEY! });
@@ -124,4 +178,10 @@ export interface YeBlockClientOptions {
 export declare class YeBlock {
   constructor(options: YeBlockClientOptions);
   readonly chat: ChatCompletions;
+  /** YeBlock LIME (design-stage). */
+  readonly ideas: Ideas;
+  /** YeBlock LIP (design-stage). */
+  readonly payments: Payments;
+  /** YeBlock LEM (design-stage). */
+  readonly energy: Energy;
 }

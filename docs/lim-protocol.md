@@ -16,6 +16,7 @@
 - [8. Versioning & Algorithm Agility](#8-versioning--algorithm-agility)
 - [9. Related Work](#9-related-work)
 - [10. Open Questions](#10-open-questions)
+- [11. The Liquid Economy Extensions](#11-the-liquid-economy-extensions)
 
 ---
 
@@ -45,6 +46,10 @@ This separation is deliberate. Specifying these would couple the protocol to pol
 | **Receipt** | A signed record that a specific workload was executed against a specific model identity by a specific operator at a specific time. |
 | **Settlement Bundle** | A batch of receipts submitted to the chain for atomic payout. |
 | **Stake** | Economic collateral locked by operators, gateways, and storage providers; slashable on protocol violation. |
+| **IdeaCapsule** | An encrypted, content-addressed idea registered on-chain with a public teaser, license terms, and pricing (§11.1). |
+| **Human Task** | A pipeline step outside model competence, posted for human execution under the standard receipt/stake regime (§11.1). |
+| **Energy Attestation** | A TEE-signed, metered claim of electricity contribution; the mint pre-image of a JouleCredit (§11.2). |
+| **Payment Stream** | A continuously settled payment channel whose checkpoints are anchored to execution receipts (§11.3). |
 
 ## 3. Primitives
 
@@ -312,6 +317,72 @@ The following are **explicitly unresolved** as of this draft. Listing them in pu
 
 These questions are not blockers for pre-alpha. They are open work for the path to mainnet.
 
+## 11. The Liquid Economy Extensions
+
+> *Status: design-stage.* The three extensions below specify the protocol surface of the Liquid Economy applications — **YeBlock LIME**, **YeBlock LEM**, and **YeBlock LIP** ([README — The Liquid Economy](../README.md#the-liquid-economy)). They introduce **no new trust machinery**: every mechanism is a composition of primitives from §3–§6. Where an extension and the core spec disagree, the core spec wins.
+
+### 11.1 YeBlock LIME — Idea Registry & Escrow
+
+An **IdeaCapsule** is registered on-chain as:
+
+```
+IdeaCapsule := {
+    capsule_id: hash,               // content hash of the ENCRYPTED payload
+    author_identity: pubkey,
+    teaser: string,                 // public abstract; the only plaintext surface
+    license: enum { buyout, licensed_execution },
+    pricing: { ask, royalty_bps },  // royalty_bps applies in licensed_execution mode
+    parents: [hash],                // idea lineage (derivative capsules)
+    signature: Signature            // PQ-signed; timestamp establishes Proof of Priority
+}
+```
+
+Lifecycle rules (normative):
+
+1. **Mint.** The payload is encrypted client-side before upload; the protocol never sees plaintext. Registration is append-only; a capsule is never re-pointed (I-1 applies to capsules).
+2. **Escrow.** A funder locks payment against `capsule_id`. Decryption grant is an author-side act; the contract releases escrow only against validated execution receipts.
+3. **Execution.** The funded capsule is decomposed into a task pipeline. Machine tasks follow §5 unchanged. Steps outside model competence are posted as **Human Tasks**: `{ capsule_id, step_id, requirements, price, acceptance_criteria }`. A human executor accepts by posting stake (§3.4 with role extended), delivers against a signed receipt (§6 schema with `executor_identity` in place of `operator_identity`), passes model-based QA plus sampled arbitration, and is slashable on non-delivery.
+4. **Settlement.** All receipts — machine and human — enter the same settlement bundle. The royalty manifest (§4.3) gains two seat classes: `idea_author` and `human_executor`. Downstream revenue replays the derivative-aware waterfall over `parents`, identically to LoRA lineages.
+
+> **Engineering reality and trade-offs.** YeBlock LIME requires Pillar 4 end-to-end: encrypted capsules, operator-blind execution for high-value ideas (TEE-pinned), and a teaser-only public surface. Without these the market fails, because anyone could copy an idea the moment it was published.
+
+### 11.2 YeBlock LEM — Energy Attestation
+
+YeBlock LEM converts energy advantage into network advantage **in place**. The protocol does not move, schedule, or settle physical electricity.
+
+**Energy-aware routing (Path A).** Routing (§5.1) gains three optional signals — `energy_cost`, `carbon_intensity`, `time_window` — applied as score weights for `batch` / `bulk` latency classes only. `interactive` routing is unchanged: latency dominance must not be traded for energy discounts on user-facing calls.
+
+**Hosting splits (Path B).** A node may register a two-seat revenue split `{ hardware_seat, energy_seat, ratio }`. Settlement (§6) enforces the split inside the operator payout; neither seat custodies the other's share.
+
+**Energy credits (Path C).** A metered contribution is attested as:
+
+```
+EnergyAttestation := {
+    meter_identity: pubkey,         // TEE-resident metering key
+    window: { start, end },
+    joules: u64,
+    green_certified: bool,
+    tee_quote: bytes,               // attestation that metering ran in-enclave
+    signature: Signature            // PQ-signed for decade-scale audit validity
+}
+```
+
+A validated attestation mints a **JouleCredit** (fungible within `green_certified` class). Operators retire credits against power costs; ESG buyers retire green credits for compliance. Metering detail is encrypted; only aggregates are public. Over-reporting is a slashing condition (`energy-over-report`) verified by redundant-meter cross-checks — the same economics as compute verification (§7.3).
+
+> **Engineering reality and trade-offs.** YeBlock LEM is an information and settlement layer. It accounts for energy costs inside the network's economics; it does not transmit or deliver electricity. No virtual power plants, no grid interconnects, no physical delivery claims.
+
+### 11.3 YeBlock LIP — Payment Rail
+
+YeBlock LIP generalizes §6 settlement into a machine-shaped payment rail. Three normative components:
+
+**Payment streams.** A stream is an open channel `{ payer, payee, rate, unit }` (unit ∈ tokens, seconds, joules) that accumulates value continuously and checkpoints against signed receipts. Closing a stream is itself a settlement act; whenever a stream stops, everything consumed up to that point has already been paid for. Stream checkpoints obey the four receipt-validity conditions (§6) unchanged.
+
+**Agent wallets.** An account-abstracted wallet bound to an agent identity, governed by an owner-set policy object: `{ per_call_limit, daily_limit, allowlist, purposes, revocable: true }`. Keys reside in TEEs. A payment outside policy is invalid at validation time — policy is enforced by the rail, not by the agent's good behavior.
+
+**A2A clearing.** Agents settle with other agents (and Human Tasks) using the same receipt-anchored payments. Every hop in a multi-agent pipeline produces a `(receipt, payment)` pair; the pair is atomic — there is no state in which payment finalizes without its receipt or vice versa. This is invariant I-5 extended from "receipts are settlement instruments" to "receipts are the *only* payment pre-image."
+
+> **Engineering reality and trade-offs.** Rail throughput figures quoted anywhere in project material are **design-capacity targets**, meaningful only when validated by public testnet measurements. YeBlock LIP provides no fiat on/off-ramps and does not target human retail payments. Fee parameters (including any burn schedule) are governance decisions, not protocol constants.
+
 ---
 
 ## Status of This Document
@@ -323,6 +394,7 @@ The document will be revised as the design matures. Each revision will increment
 ### Change Log
 
 - **v0.1** — Initial public draft.
+- **v0.1.1** — Added §11: the Liquid Economy extensions (YeBlock LIME idea registry & escrow, YeBlock LEM energy attestation, YeBlock LIP payment rail), with matching terminology entries in §2.
 
 ---
 

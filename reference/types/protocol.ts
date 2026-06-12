@@ -84,7 +84,12 @@ export interface ChannelOffer {
 // ---------------------------------------------------------------------------
 
 /** Roles that must post stake proportional to the damage they could cause. */
-export type StakedRole = "operator" | "gateway" | "storage";
+export type StakedRole =
+  | "operator"
+  | "gateway"
+  | "storage"
+  | "human-executor" // accepts Human Tasks in a YeBlock LIME pipeline (§11.1)
+  | "energy-meter"; // submits energy attestations for JouleCredit minting (§11.2)
 
 export interface StakeCommitment {
   readonly identity: Identity;
@@ -101,7 +106,9 @@ export type SlashingCondition =
   | "execution-deviation" // operator returned output inconsistent with spot-check
   | "receipt-forgery" // signed a receipt for work not performed
   | "replica-unavailable" // storage provider failed a proof of retrievability
-  | "double-spend-receipt"; // submitted the same receipt to two bundles
+  | "double-spend-receipt" // submitted the same receipt to two bundles
+  | "human-task-nondelivery" // accepted a Human Task and failed QA/arbitration (§11.1)
+  | "energy-over-report"; // attested more joules than redundant meters corroborate (§11.2)
 
 // ---------------------------------------------------------------------------
 // §4  Model identity & royalty manifests  (Pillar 3)
@@ -195,4 +202,141 @@ export interface ReceiptValidator {
   stakeIsCurrentAt(operator: Identity, timestamp: number): boolean;
   modelResolvesToLiveManifest(modelIdentity: ContentId): boolean;
   notPreviouslyFinalized(workloadId: ContentId): boolean;
+}
+
+// ---------------------------------------------------------------------------
+// §11  Liquid Economy extensions  (design-stage)
+// ---------------------------------------------------------------------------
+//
+// YeBlock LIME / YeBlock LEM / YeBlock LIP introduce no new trust machinery: every object below is settled,
+// staked, and verified through the §3-§6 primitives above. Transcribed from
+// docs/lim-protocol.md §11.
+
+// --- §11.1  YeBlock LIME - IdeaCapsule, escrow, human tasks ----------------
+
+export type IdeaLicense = "buyout" | "licensed-execution";
+
+export interface IdeaCapsule {
+  /** Content hash of the ENCRYPTED payload; the protocol never sees plaintext. */
+  readonly capsuleId: ContentId;
+  readonly author: Identity;
+  /** Public abstract - the only plaintext surface of the capsule. */
+  readonly teaser: string;
+  readonly license: IdeaLicense;
+  readonly pricing: {
+    /** Asking price, settlement-currency smallest units. */
+    readonly ask: bigint;
+    /** Perpetual author share in licensed-execution mode; ignored for buyout. */
+    readonly royaltyBps: number;
+  };
+  /** Idea lineage: parent capsules this one derives from (revenue flows upstream). */
+  readonly parents: ReadonlyArray<ContentId>;
+  /** PQ-signed; the registration timestamp establishes Proof of Priority. */
+  readonly signature: ForwardSecureSignature;
+}
+
+export type EscrowPhase = "funded" | "executing" | "settled" | "refunded";
+
+export interface EscrowState {
+  readonly capsuleId: ContentId;
+  readonly funder: Identity;
+  readonly amount: bigint;
+  readonly phase: EscrowPhase;
+}
+
+/** A pipeline step outside model competence, posted for human execution (Reverse Hiring). */
+export interface HumanTask {
+  readonly capsuleId: ContentId;
+  readonly stepId: ContentId;
+  readonly requirements: string;
+  readonly price: bigint;
+  readonly acceptanceCriteria: string;
+  /** Stake the accepting executor must post; slashed on "human-task-nondelivery". */
+  readonly requiredStake: bigint;
+}
+
+/**
+ * Receipt for a delivered human task - the §6 schema with the executor in the operator
+ * seat. Human and machine receipts enter the SAME settlement bundle.
+ */
+export interface HumanTaskReceipt {
+  readonly workloadId: ContentId; // = stepId
+  readonly capsuleId: ContentId;
+  readonly executorIdentity: Identity;
+  readonly deliverable: ContentId; // content hash of the delivered artifact
+  readonly timestamp: number;
+  readonly executorSignature: ForwardSecureSignature;
+}
+
+// --- §11.2  YeBlock LEM - energy attestation & credits ---------------------
+
+export interface EnergyAttestation {
+  /** TEE-resident metering key; metering detail stays encrypted, aggregates are public. */
+  readonly meterIdentity: Identity;
+  readonly windowStart: number;
+  readonly windowEnd: number;
+  readonly joules: bigint;
+  readonly greenCertified: boolean;
+  /** Attestation that metering ran in-enclave (quote format is TEE-vendor-tagged). */
+  readonly teeQuote: string;
+  /** PQ-signed for decade-scale audit validity. */
+  readonly signature: ForwardSecureSignature;
+}
+
+/** Fungible within its green class; minted 1:1 from validated attestations. */
+export interface JouleCredit {
+  readonly creditId: ContentId;
+  readonly attestation: ContentId; // hash of the minting EnergyAttestation
+  readonly joules: bigint;
+  readonly greenCertified: boolean;
+  /** Set when retired (against power costs or ESG compliance); retirement is terminal. */
+  readonly retiredBy?: Identity;
+}
+
+/** Two-seat node revenue split, enforced inside the operator payout at settlement. */
+export interface HostingSplit {
+  readonly hardwareSeat: Identity;
+  readonly energySeat: Identity;
+  /** Hardware seat's share in basis points; energy seat receives the remainder. */
+  readonly hardwareBps: number;
+}
+
+// --- §11.3  YeBlock LIP - payment streams, agent wallets, A2A --------------
+
+export type StreamUnit = "tokens" | "seconds" | "joules";
+
+export interface PaymentStream {
+  readonly streamId: ContentId;
+  readonly payer: Identity;
+  readonly payee: Identity;
+  /** Accrual rate per unit, settlement-currency smallest units. */
+  readonly ratePerUnit: bigint;
+  readonly unit: StreamUnit;
+  /** Checkpoints are receipt-anchored; closing a stream is itself a settlement act. */
+  readonly lastCheckpointReceipt?: ContentId;
+  readonly open: boolean;
+}
+
+/** Owner-set policy governing an agent-held wallet. Enforced by the rail at validation
+ *  time - a payment outside policy is invalid, regardless of agent behavior. */
+export interface AgentWalletPolicy {
+  readonly owner: Identity;
+  readonly agent: Identity;
+  readonly perCallLimit: bigint;
+  readonly dailyLimit: bigint;
+  readonly allowlist: ReadonlyArray<Identity>;
+  readonly purposes: ReadonlyArray<string>;
+  readonly revocable: true; // policy revocation is non-negotiable
+}
+
+/**
+ * The atomic unit of A2A clearing: a payment and the receipt that justifies it. There is
+ * no state in which one half finalizes without the other (invariant I-5, extended:
+ * receipts are the ONLY payment pre-image).
+ */
+export interface ReceiptAnchoredPayment {
+  readonly payer: Identity;
+  readonly payee: Identity;
+  readonly amount: bigint;
+  readonly receipt: ContentId; // ExecutionReceipt or HumanTaskReceipt hash
 }

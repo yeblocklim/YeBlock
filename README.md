@@ -32,6 +32,7 @@
 - [The Third Unbundling](#the-third-unbundling)
 - [What is YeBlock LIM?](#what-is-yeblock-lim)
 - [The Five Pillars](#the-five-pillars)
+- [The Liquid Economy](#the-liquid-economy)
 - [Architecture at a Glance](#architecture-at-a-glance)
 - [YeBlock LIM vs The Status Quo](#yeblock-lim-vs-the-status-quo)
 - [Design Targets](#design-targets)
@@ -107,6 +108,26 @@ YeBlock LIM is composed of **five vertically integrated, horizontally composable
 | 5 | **Post-Quantum** | Forward-secure cryptographic primitives across the entire stack — transport, storage indexing, settlement, and identity. | The protocol is designed to outlive the cryptographic assumptions it is built on. Settlement records remain verifiable in a post-quantum world. |
 
 > The pillars are not stages. They are layers. A single inference request exercises all five simultaneously.
+
+## The Liquid Economy
+
+The five pillars are infrastructure — they answer *what the network is made of*. The **Liquid Economy** is the application layer that answers *what economic activity happens on top of it*: three protocol-native applications, built entirely from primitives the pillars already provide.
+
+> HTTP unbundled content. The EVM unbundled money. YeBlock LIM unbundles intelligence — and the Liquid Economy makes **ideas**, **energy**, and **settlement** flow on top of it.
+
+| Application | One-liner | What flows |
+|---|---|---|
+| **YeBlock LIME** — Liquid Idea Market & Execution | Publish an encrypted idea, get it funded, have the mesh execute it — AI first, humans for what AI cannot do — with perpetual royalties back to the author. | Ideas |
+| **YeBlock LEM** — Liquid Energy Mesh | Turn stranded or surplus electricity into inference revenue: run nodes on cheap power, host others' hardware, or mint attested energy credits. | Energy |
+| **YeBlock LIP** — Liquid Intelligence Pay | A payment rail shaped for machines: streaming micropayments, agent-held wallets, and receipt-anchored settlement at machine frequency. | Settlement |
+
+**YeBlock LIME** treats an idea the way Pillar 3 treats a LoRA: a content-addressed, royalty-bearing asset. An author publishes an encrypted *IdeaCapsule* with a public teaser; a funder escrows payment; the mesh decomposes the idea into a task pipeline executed by composed models on network operators — and when a step requires something no model can do (physical-world legwork, credentialed sign-off, final human judgment), the pipeline *reverse-hires* a human: the task is posted with a price and acceptance criteria, and the human executor is held to the same receipt, stake, and slashing regime as any operator. Revenue from the resulting artifact flows down the same royalty waterfall that pays LoRA authors — with the idea author and human executors as first-class seats.
+
+**YeBlock LEM** starts from an honest physical constraint: electricity does not travel well, but intelligence does. YeBlock LEM therefore never touches physical power delivery — it converts energy advantage into network advantage in place. Routing already selects operators by price; YeBlock LEM adds energy cost, carbon intensity, and time-of-day as routing signals, so batch workloads migrate to wherever power is cheapest. Hardware owners and site operators with cheap power split node revenue by on-chain agreement, and metered, TEE-attested energy contributions can be minted as auditable credits.
+
+**YeBlock LIP** generalizes what the protocol already does internally. Every settled inference is already a micro-payment fanned out to many parties; YeBlock LIP turns that machinery into a first-class rail: agent-held wallets with spend policies, streaming pay-per-token billing that stops when the stream stops, and agent-to-agent clearing for multi-agent pipelines. Its distinguishing property is inherited from invariant I-5: every payment is anchored to a signed execution receipt, so payment and delivery proof happen in one step.
+
+The three applications are **design-stage** (see [Status & Milestones](#status--milestones)) and intentionally thin: each one is a recomposition of existing protocol primitives — receipts, the royalty waterfall, stake-and-slash economics, TEE attestation, and post-quantum signatures — rather than new trust machinery. The corresponding specification sections live in [docs/lim-protocol.md](./docs/lim-protocol.md), and runnable reference mechanisms live under [`reference/protocol/`](./reference/protocol).
 
 ## Architecture at a Glance
 
@@ -243,6 +264,7 @@ Ahead of those repositories, the **normative reference surface** — the wire da
 | **Phase 2 — Reference Application** | Production frontend with account system, AI chat surface, invite mechanics | Live in pre-alpha |
 | **Phase 3 — Compute Network Prototype** | Single-region testnet, LoRA composition runtime, off-chain settlement | Design |
 | **Phase 4 — Settlement Layer** | Smart contract suite, third-party audit, mainnet deployment | Specification |
+| **Phase 4.5 — Liquid Economy Applications** | YeBlock LIME (idea market), YeBlock LEM (energy mesh), YeBlock LIP (payment rail) — protocol-native applications composed from the five pillars | Specification |
 | **Phase 5 — Open Network** | Public node onboarding, decentralized governance handover | Planned |
 
 A detailed roadmap with quarterly milestones is published separately and updated each quarter.
@@ -254,7 +276,7 @@ A detailed roadmap with quarterly milestones is published separately and updated
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Layered system architecture, component responsibilities, request flow, security boundaries, design invariants. |
 | [docs/lim-protocol.md](./docs/lim-protocol.md) | YeBlock LIM protocol design — primitives, composition rules, settlement choreography, threat model, comparison with prior work. |
 | [docs/concepts.md](./docs/concepts.md) | The YeBlock LIM lexicon — every term we coined, defined precisely, in one place. |
-| [reference/](./reference) | Normative reference interfaces — protocol types, SDK shape, node composition/receipts, hybrid KEM, and settlement contract interfaces, each mapped to a pillar and a spec section. |
+| [reference/](./reference) | Normative reference interfaces — protocol types, SDK shape, node composition/receipts, hybrid KEM, settlement and liquid-economy contract interfaces, plus the runnable original mechanisms (economic security, routing, royalty waterfall, idea market, energy market, payment rail), each mapped to a pillar and a spec section. |
 | [Discussions](https://github.com/yeblocklim/YeBlock/discussions) | Open Q&A, design debates, governance proposals. |
 | [Issues](https://github.com/yeblocklim/YeBlock/issues) | Concrete bug reports, documentation gaps, feature requests. |
 
