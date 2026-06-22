@@ -92,7 +92,7 @@ An auditable on-chain energy credit minted from metered, TEE-attested electricit
 
 ### Liquid Economy
 
-The application layer of YeBlock LIM: three protocol-native applications — YeBlock LIME (ideas), YeBlock LEM (energy), YeBlock LIP (settlement) — composed entirely from primitives the five pillars already provide. The pillars answer *what the network is made of*; the Liquid Economy answers *what economic activity happens on it*. The three applications cover the network's input (energy), its demand side (ideas), and how value moves between participants (settlement). *See: [README — The Liquid Economy](../README.md#the-liquid-economy)*
+The application layer of YeBlock LIM, also called the **Liquid Trinity**: three protocol-native applications — YeBlock LIME (ideas), YeBlock LEM (energy), YeBlock LIP (settlement) — composed entirely from primitives the five pillars already provide. The pillars answer *what the network is made of*; the Liquid Economy answers *what economic activity happens on it*. The three applications cover the network's input (energy), its demand side (ideas), and how value moves between participants (settlement). *See: [README — The Liquid Economy](../README.md#the-liquid-economy)*
 
 ### LoRA Royalty Streams
 
