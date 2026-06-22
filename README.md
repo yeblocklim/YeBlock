@@ -111,7 +111,7 @@ YeBlock LIM is composed of **five vertically integrated, horizontally composable
 
 ## The Liquid Economy
 
-The five pillars are infrastructure — they answer *what the network is made of*. The **Liquid Economy** is the application layer that answers *what economic activity happens on top of it*: three protocol-native applications, built entirely from primitives the pillars already provide.
+The five pillars are infrastructure — they answer *what the network is made of*. The **Liquid Economy** — also called the **Liquid Trinity** — is the application layer that answers *what economic activity happens on top of it*: three protocol-native applications, built entirely from primitives the pillars already provide. The trinity is ideas, energy, and settlement flowing at the protocol level: YeBlock LIM produces intelligence, LIME trades ideas, LEM supplies energy, and LIP settles — energy in, intelligence out, ideas driving, payments closing the loop.
 
 > HTTP unbundled content. The EVM unbundled money. YeBlock LIM unbundles intelligence — and the Liquid Economy makes **ideas**, **energy**, and **settlement** flow on top of it.
 
@@ -276,6 +276,7 @@ A detailed roadmap with quarterly milestones is published separately and updated
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Layered system architecture, component responsibilities, request flow, security boundaries, design invariants. |
 | [docs/lim-protocol.md](./docs/lim-protocol.md) | YeBlock LIM protocol design — primitives, composition rules, settlement choreography, threat model, comparison with prior work. |
 | [docs/concepts.md](./docs/concepts.md) | The YeBlock LIM lexicon — every term we coined, defined precisely, in one place. |
+| [docs/tokenomics.md](./docs/tokenomics.md) | YBT token economics (design-stage) — total supply, allocation, vesting, buyback/burn, and the network reward split behind `ISettlement.networkSplitBps()`. |
 | [reference/](./reference) | Normative reference interfaces — protocol types, SDK shape, node composition/receipts, hybrid KEM, settlement and liquid-economy contract interfaces, plus the runnable original mechanisms (economic security, routing, royalty waterfall, idea market, energy market, payment rail), each mapped to a pillar and a spec section. |
 | [Discussions](https://github.com/yeblocklim/YeBlock/discussions) | Open Q&A, design debates, governance proposals. |
 | [Issues](https://github.com/yeblocklim/YeBlock/issues) | Concrete bug reports, documentation gaps, feature requests. |
